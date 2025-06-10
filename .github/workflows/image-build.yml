@@ -45,4 +45,54 @@ jobs:
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
           --destination="ghcr.io/${{ github.repository }}:v$VERSION.$TAG" \
           --build-arg VERSION=$VERSION \
+          --target CONTROLPLANE \
           --push-retry 3
+  build-kube-proxy:
+    runs-on: arc-runner-${{ github.event.repository.name }}
+    container:
+      image: gcr.io/kaniko-project/executor:debug
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - name: Set tag
+      run: |
+        echo VERSION=$(wget -O - https://api.github.com/repos/kubernetes/kubernetes/releases/latest | grep tag_name | cut -d '"' -f 4 | tr -d 'v') | tee -a "$GITHUB_ENV"
+        echo TAG=$(date -u +'%Y%m%d.%H%M') | tee -a "$GITHUB_ENV"
+
+    - name: Build and release container
+      run: |
+        cat > $DOCKER_CONFIG/config.json <<EOF
+        {
+          "auths": {
+            "ghcr.io": {
+              "auth": "$(echo -n ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }} | base64 -w0)"
+            }
+          }
+        }
+        EOF
+
+        /kaniko/executor \
+          --dockerfile="./Containerfile" \
+          --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
+          --destination="ghcr.io/${{ github.repository }}:v$VERSION.$TAG-kube-proxy" \
+          --build-arg VERSION=$VERSION \
+          --target KUBE-PROXY \
+          --push-retry 3
+  cleanup:
+    needs:
+      - build
+      - build-kube-proxy
+    runs-on: arc-runner-${{ github.event.repository.name }}
+    container:
+      image: docker.io/node:current-alpine
+    permissions:
+      packages: write
+    steps:
+      - name: Remove old container images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: ${{ github.event.repository.name }}
+          package-type: container
+          min-versions-to-keep: 6
+          token: ${{ secrets.GITHUB_TOKEN }}
