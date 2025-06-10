@@ -25,7 +25,7 @@ COPY --from=BUILD /go/src/kubernetes/_output/bin/kube-apiserver /usr/local/bin/
 COPY --from=BUILD /go/src/kubernetes/_output/bin/kube-controller-manager /usr/local/bin/
 COPY --from=BUILD /go/src/kubernetes/_output/bin/kube-scheduler /usr/local/bin/
 
-FROM alpine:edge as KUBE-PROXY
+FROM alpine:3.21 as KUBE-PROXY
 
 COPY --from=BUILD /go/src/kubernetes/_output/bin/kube-proxy /usr/local/bin/
 RUN set -x \
