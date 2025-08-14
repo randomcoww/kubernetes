@@ -45,6 +45,7 @@ jobs:
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
           --destination="ghcr.io/${{ github.repository }}:v$VERSION.$TAG" \
           --build-arg VERSION=$VERSION \
+          --skip-unused-stages \
           --target CONTROLPLANE \
           --push-retry 3
   build-kube-proxy:
@@ -77,6 +78,7 @@ jobs:
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
           --destination="ghcr.io/${{ github.repository }}:v$VERSION.$TAG-kube-proxy" \
           --build-arg VERSION=$VERSION \
+          --skip-unused-stages \
           --target KUBE-PROXY \
           --push-retry 3
   cleanup:
