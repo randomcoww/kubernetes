@@ -48,7 +48,6 @@ jobs:
           --build-arg VERSION=$VERSION \
           --skip-unused-stages \
           --target CONTROLPLANE \
-          --cache \
           --push-retry 3
   build-kube-proxy:
     runs-on: arc-runner-${{ github.event.repository.name }}
@@ -83,7 +82,6 @@ jobs:
           --build-arg VERSION=$VERSION \
           --skip-unused-stages \
           --target KUBE-PROXY \
-          --cache \
           --push-retry 3
   cleanup:
     needs:
