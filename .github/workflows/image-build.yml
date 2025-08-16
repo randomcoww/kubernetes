@@ -18,7 +18,7 @@ jobs:
   build:
     runs-on: arc-runner-${{ github.event.repository.name }}
     container:
-      image: ghcr.io/randomcoww/kaniko:v1.25.1.20250816.2004
+      image: ghcr.io/randomcoww/kaniko:debug
     permissions:
       contents: read
       packages: write
@@ -47,13 +47,13 @@ jobs:
           --destination="ghcr.io/${{ github.repository }}:v$VERSION.$TAG" \
           --build-arg VERSION=$VERSION \
           --skip-unused-stages \
-          --target CONTROLPLANE \
+          --target controlplane \
           --cache \
           --push-retry 3
   build-kube-proxy:
     runs-on: arc-runner-${{ github.event.repository.name }}
     container:
-      image: ghcr.io/randomcoww/kaniko:v1.25.1.20250816.2004
+      image: ghcr.io/randomcoww/kaniko:debug
     permissions:
       contents: read
       packages: write
@@ -82,7 +82,7 @@ jobs:
           --destination="ghcr.io/${{ github.repository }}:v$VERSION.$TAG-kube-proxy" \
           --build-arg VERSION=$VERSION \
           --skip-unused-stages \
-          --target KUBE-PROXY \
+          --target kube-proxy \
           --cache \
           --push-retry 3
   cleanup:
