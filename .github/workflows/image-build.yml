@@ -63,8 +63,8 @@ jobs:
       packages: write
     steps:
     - env:
-      VERSION: ${{needs.build.outputs.version}
-      TAG: ${{needs.build.outputs.tag}
+        VERSION: ${{needs.build.outputs.version}
+        TAG: ${{needs.build.outputs.tag}
     - name: Build and release container
       run: |
         mkdir -p $DOCKER_CONFIG
