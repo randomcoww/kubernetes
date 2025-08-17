@@ -63,7 +63,7 @@ jobs:
       packages: write
     env:
       VERSION: ${{needs.build.outputs.version}}
-      TAG: ${{needs.build.outputs.tag}
+      TAG: ${{needs.build.outputs.tag}}
     steps:
     - name: Build and release container
       run: |
