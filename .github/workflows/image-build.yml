@@ -58,7 +58,6 @@ jobs:
           --build-arg VERSION=${{needs.tag.outputs.version}} \
           --skip-unused-stages \
           --target controlplane \
-          --cache \
           --push-retry 3
   build-kube-proxy:
     needs:
@@ -90,7 +89,6 @@ jobs:
           --build-arg VERSION=${{needs.tag.outputs.version}} \
           --skip-unused-stages \
           --target kube-proxy \
-          --cache \
           --push-retry 3
   cleanup:
     needs:
