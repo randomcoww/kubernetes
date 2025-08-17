@@ -55,7 +55,7 @@ jobs:
           --dockerfile="./Containerfile" \
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
           --destination="ghcr.io/${{ github.repository }}:${{needs.tag.outputs.version}}.${{needs.tag.outputs.timestamp}}" \
-          --build-arg VERSION=$VERSION \
+          --build-arg VERSION=${{needs.tag.outputs.version}} \
           --skip-unused-stages \
           --target controlplane \
           --cache \
@@ -87,7 +87,7 @@ jobs:
           --dockerfile="./Containerfile" \
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
           --destination="ghcr.io/${{ github.repository }}:${{needs.tag.outputs.version}}.${{needs.tag.outputs.timestamp}}-kube-proxy" \
-          --build-arg VERSION=$VERSION \
+          --build-arg VERSION=${{needs.tag.outputs.version}} \
           --skip-unused-stages \
           --target kube-proxy \
           --cache \
