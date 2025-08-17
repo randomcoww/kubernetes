@@ -25,11 +25,13 @@ jobs:
     steps:
     - name: Set tag
       run: |
-        echo VERSION=$(wget -O - https://api.github.com/repos/kubernetes/kubernetes/releases/latest | grep tag_name | cut -d '"' -f 4 | tr -d 'v') | tee -a "$GITHUB_ENV"
-        echo TAG=$(date -u +'%Y%m%d.%H%M') | tee -a "$GITHUB_ENV"
+        VERSION=$(wget -O - https://api.github.com/repos/kubernetes/kubernetes/releases/latest | grep tag_name | cut -d '"' -f 4 | tr -d 'v')
+        TAG=$(date -u +'%Y%m%d.%H%M')
 
-        echo version=$VERSION | tee -a "$GITHUB_OUTPUT"
-        echo tag=$TAG | tee -a "$GITHUB_OUTPUT"
+        echo VERSION=$VERSION | tee -a "$GITHUB_ENV"
+        echo TAG=$TAG | tee -a "$GITHUB_ENV"
+        echo VERSION=$VERSION | tee -a "$GITHUB_OUTPUT"
+        echo TAG=$TAG | tee -a "$GITHUB_OUTPUT"
     - name: Build and release container
       run: |
         mkdir -p $DOCKER_CONFIG
@@ -62,8 +64,8 @@ jobs:
       contents: read
       packages: write
     env:
-      VERSION: ${{needs.build.outputs.version}}
-      TAG: ${{needs.build.outputs.tag}}
+      VERSION: ${{needs.build.outputs.VERSION}}
+      TAG: ${{needs.build.outputs.TAG}}
     steps:
     - name: Build and release container
       run: |
