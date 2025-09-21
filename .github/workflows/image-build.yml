@@ -21,7 +21,7 @@ jobs:
   tag:
     runs-on: arc-runner-${{ github.event.repository.name }}
     container:
-      image: docker.io/library/busybox:latest
+      image: registry.default/randomcoww/kaniko:latest
     outputs:
       version: ${{ steps.tag.outputs.VERSION }}
       timestamp: ${{ steps.tag.outputs.TAG }}
@@ -53,15 +53,22 @@ jobs:
           }
         }
         EOF
+        echo -e "$INTERNAL_CA_CERT" > $DOCKER_CONFIG/internal.crt
 
         /kaniko/executor \
           --dockerfile="./Containerfile" \
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
           --destination="ghcr.io/${{ github.repository }}:${{needs.tag.outputs.version}}.${{needs.tag.outputs.timestamp}}" \
+          --registry-certificate=$INTERNAL_REGISTRY=$DOCKER_CONFIG/internal.crt \
           --build-arg VERSION=${{needs.tag.outputs.version}} \
-          --skip-unused-stages \
           --target controlplane \
-          --push-retry 3
+          --use-new-run \
+          --skip-unused-stages \
+          --snapshot-mode=redo \
+          --cleanup \
+          --image-download-retry=4 \
+          --image-fs-extract-retry=4 \
+          --push-retry=4
   cleanup:
     needs:
       - build
@@ -100,15 +107,22 @@ jobs:
           }
         }
         EOF
+        echo -e "$INTERNAL_CA_CERT" > $DOCKER_CONFIG/internal.crt
 
         /kaniko/executor \
           --dockerfile="./Containerfile" \
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
           --destination="ghcr.io/${{ github.repository }}-kube-proxy:${{needs.tag.outputs.version}}.${{needs.tag.outputs.timestamp}}" \
+          --registry-certificate=$INTERNAL_REGISTRY=$DOCKER_CONFIG/internal.crt \
           --build-arg VERSION=${{needs.tag.outputs.version}} \
-          --skip-unused-stages \
           --target kube-proxy \
-          --push-retry 3
+          --use-new-run \
+          --skip-unused-stages \
+          --snapshot-mode=redo \
+          --cleanup \
+          --image-download-retry=4 \
+          --image-fs-extract-retry=4 \
+          --push-retry=4
   cleanup-kube-proxy:
     needs:
       - build-kube-proxy
