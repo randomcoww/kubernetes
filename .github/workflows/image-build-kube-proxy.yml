@@ -31,7 +31,7 @@ jobs:
     steps:
     - name: Set tag
       run: |
-        echo VERSION=$(wget -O - https://api.github.com/repos/kubernetes/kubernetes/releases/latest | grep tag_name | cut -d '"' -f 4) | tee -a "$GITHUB_OUTPUT"
+        echo VERSION=$(wget -O - https://api.github.com/repos/kubernetes/kubernetes/releases/latest | grep tag_name | cut -d '"' -f 4) | tee -a "$GITHUB_ENV"
         echo TAG=$(date -u +'%Y%m%d.%H%M') | tee -a "$GITHUB_ENV"
 
     - name: Build and release container
