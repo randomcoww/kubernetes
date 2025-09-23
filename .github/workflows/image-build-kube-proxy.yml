@@ -75,7 +75,7 @@ jobs:
       - name: Remove old container images
         uses: actions/delete-package-versions@v5
         with:
-          package-name: ${{ github.event.repository.name }}-kube-proxy
+          package-name: ${{ github.event.repository.name }}-${{ env.TARGET }}
           package-type: container
           min-versions-to-keep: 4
           token: ${{ secrets.GITHUB_TOKEN }}
