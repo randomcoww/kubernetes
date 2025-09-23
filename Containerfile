@@ -18,7 +18,7 @@ RUN set -x \
     kube-scheduler \
     kube-proxy
 
-FROM scratch as control-plane
+FROM scratch as kubernetes-control-plane
 
 COPY --from=build /go/src/kubernetes/_output/bin/kube-apiserver /usr/local/bin/
 COPY --from=build /go/src/kubernetes/_output/bin/kube-controller-manager /usr/local/bin/
